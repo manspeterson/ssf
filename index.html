@@ -27,8 +27,40 @@
     
     nav a {
         display: inline-block;
-        width: 33.33%;
-        line-height: 37px;
+        /*width: 33.33%;
+        line-height: 37px;*/
+    }
+
+    #users a {
+        width: 100%;
+        font-size: 8em;
+        line-height: 1.5;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    #users a:hover {
+        text-decoration: underline;
+    }
+
+    .profile-pic {
+        display: none;
+        position: absolute;
+        /*top: 10%;*/
+        /*left: 10%;*/
+        z-index: -1;
+        width: auto;
+        height: auto;
+        max-width: 20%;
+        max-height: 30%;
+    }
+
+    #users a:nth-child(even) .profile-pic {
+        /*right: 10%;*/
+    }
+
+    #users a:hover .profile-pic {
+        display: block;
     }
     
     nav {
@@ -176,13 +208,17 @@
     .img-link {
         width: 35%;
     }
-    
+        
+    #instafeed {
+        float: left;
+    }
 
     
     #linktree {
         position: fixed;
         left: 3%;
-        top: 30%;
+        bottom: 0%;
+        padding-bottom: 3%;
         line-height: 2;
     }
     
@@ -263,12 +299,38 @@
         </table>
         </div>
         <script type="text/javascript">
+        // var users = [{
+        //     username: "_frida_my_",
+        //     id: "178592166"
+        // }, {
+        //     username: "klarakassman",
+        //     id: "8553215"
+        // }, {
+        //     username: "abcalexandra",
+        //     id: "5630181"
+        // }, {
+        //     username: "lejonhjerta",
+        //     id: "244574151"
+        // }, {
+        //     username: "veraedwall",
+        //     id: "30101718"
+        // }, {
+        //     username: "beahansson",
+        //     id: "7848063"
+        // }, {
+        //     username: "badrizia",
+        //     id: "31979878"
+        // }, {
+        //     username: "fridavega",
+        //     id: "11691495"
+        // }, {
+        //     username: "moasewerin",
+        //     id: "3222032"
+        // }];
+
         var users = [{
             username: "_frida_my_",
             id: "178592166"
-        }, {
-            username: "klarakassman",
-            id: "8553215"
         }, {
             username: "abcalexandra",
             id: "5630181"
@@ -284,13 +346,8 @@
         }, {
             username: "badrizia",
             id: "31979878"
-        }, {
-            username: "fridavega",
-            id: "11691495"
-        }, {
-            username: "moasewerin",
-            id: "3222032"
         }];
+
         var numberOfUsers = 1;
         var userSet = {};
         var currentUser = 178592166;
@@ -465,7 +522,7 @@
                 limit: 50,
                 // template: '<img src="{{image}}" class="{{orientation}}"/><h3>{{likes}}</h3>'
                 success: function(response) {
-                    // console.log(response);
+                    console.log(response);
                     drawUserPhotos(response);
 
                     var linkPhoto = getLinkPhoto(response);
@@ -504,12 +561,17 @@
             numberOfUsers = 1;
             userSet = {};
             getPhotos(id);
+            setTimeout(scrollTo,1000);
         }
 
         function scrollTo(id) {
             if (id == 0) {
                 $('html, body').animate({
                     scrollTop: 0
+                }, 1000);
+            } else if (id == null) {
+                $('html, body').animate({
+                    scrollTop: $('.userInfo').first().offset().top
                 }, 1000);
             } else {
                 $('html, body').animate({
@@ -536,8 +598,19 @@
         for (x in users) {
             var a = $('<a />');
             a.attr('onclick', 'getUserPhotos(' + users[x].id + ');');
-            a.attr('href', '#');
+            // a.attr('href', '');
             a.text('@' + users[x].username);
+            var img = $('<img class="profile-pic"/>');
+            img.attr('src', 'img/' + users[x].username + '.jpg');
+            if (x % 2 === 0){
+                img.css('right', 10+x*3 + '%');
+                img.css('bottom', 10+x*5 + '%');
+            }
+            else {
+                 img.css('left', 10+x*2 + '%');
+                img.css('top', 15+x*5 + '%');
+            } 
+            img.appendTo(a);
             $('#users').append(a);
         }
 
