@@ -1,0 +1,588 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Samtida Svensk Fotografi</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <script type="text/javascript" src="js/instafeed.min.js"></script>
+    <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+    <!--<link rel="stylesheet" href="css/main.css"> -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <style type="text/css">
+    body {
+        font-family: 'Gridnik';
+        margin-top: 0;
+        margin-left: 0;
+    }
+    
+    a,
+    a:visited {
+        color: black;
+    }
+    
+    nav a {
+        display: inline-block;
+        width: 33.33%;
+        line-height: 37px;
+    }
+    
+    nav {
+        padding: 3%;
+        width: 50%;
+        box-sizing: border-box;
+        float: left;
+    }
+    
+    .nav-about {
+        width: 25%;
+        position: fixed;
+        right: 3%;
+        text-align: right;
+        font-size: 8em;
+        padding: 3%;
+        line-height: 1;
+        box-sizing: border-box;
+    }
+    
+    .nav-about a {
+        text-decoration: none;
+    }
+    
+    h1,
+    h3 {
+        font-size: 2em;
+        line-height: 1.13;
+        margin: 0;
+    }
+    
+    h1 {
+        margin: 0;
+        position: fixed;
+    }
+    
+    h1 a {
+        text-decoration: none;
+    }
+    
+    h1 a:hover {
+        visibility: hidden;
+    }
+    
+    h1 a:hover:before {
+        content: url('pil.svg');
+        display: inline-block;
+        transform-origin: 0 0;
+        transform: scale(1.5);
+        visibility: visible;
+        width: 100%;
+    }
+    
+    header {
+        padding: 3%;
+        width: 25%;
+        float: left;
+        box-sizing: border-box;
+    }
+    
+    .user {
+        float: left;
+        padding-top: 5%;
+    }
+    
+    .userInfo {
+        width: 75%;
+        padding: 3%;
+        float: right;
+        text-align: left;
+        margin-top: 0;
+        padding-bottom: 15%;
+        box-sizing: border-box;
+    }
+    
+    .userPhotos {
+        width: 70%;
+        float: right;
+    }
+    
+    .userPhoto img {
+        width: 100%;
+    }
+    
+    .userPhoto {
+        width: 50%;
+        padding-bottom: 25%;
+        float: right;
+    }
+    
+    .userPhoto:nth-child(even) {
+        float: left;
+    }
+    
+    .user:nth-child(even) .userPhoto,
+    .user:nth-child(even) .linkPhoto .container {
+        float: left;
+    }
+    
+    .userPhoto-0 {
+        width: 70%;
+    }
+    
+    .userPhoto-1 {
+        width: 40%;
+        margin-top: -20%;
+    }
+    
+    .userPhoto-2 {
+        width: 30%;
+        margin-left: 30%;
+        margin-top: -20%;
+    }
+    
+    .userPhoto-3 {
+        width: 55%;
+        margin-left: -10%;
+        margin-top: -20%;
+    }
+    
+    .userPhoto-4 {
+        width: 40%;
+        margin-left: -30%;
+        margin-top: -40%;
+    }
+    
+    .userPhoto-5 {
+        width: 55%;
+        margin-left: -20%;
+        margin-top: -20%;
+    }
+    
+    .linkPhoto {
+        width: 70%;
+        float: right;
+        margin-top: -20%;
+        padding-right: 10%;
+        box-sizing: border-box;
+    }
+    
+    .linkPhoto .conatiner {
+        float: right;
+    }
+    
+    .img-link {
+        width: 35%;
+    }
+    
+
+    
+    #linktree {
+        position: fixed;
+        left: 3%;
+        top: 30%;
+        line-height: 2;
+    }
+    
+    #linktree span {
+        padding-left: 0;
+        display: inline-block;
+        font-size: 1em;
+    }
+    
+    #linktree span:first-child {
+        padding-left: 0;
+    }
+    
+    footer {
+        width: 75%;
+        padding: 3%;
+        box-sizing: border-box;
+        float: right;
+        height: 400px;
+    }
+
+    #full {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255,255,255,0.95);
+        display: none;
+        cursor: zoom-out;
+        -webkit-cursor: zoom-out;
+
+
+    }
+    #overlay {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        border: 0;
+
+    }
+    .userPhoto img, .linkPhoto img {
+        cursor: zoom-in;
+    }
+
+    #overlay td {
+        vertical-align: middle;
+        text-align: center;
+    }
+    #full img {
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto;
+
+    }
+    </style>
+</head>
+
+<body>
+    <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <header>
+        <h1><a href="#" onclick="scrollTo(0)">Samtida<br/>Svensk<br/>Fotografi</a></h1></header>
+    <nav id="users"></nav>
+    <nav class="nav-about"><a href="#">?</a></nav>
+    <aside id="linktree"></aside>
+    <main id="instafeed">
+    </main>
+    <footer>
+        <h3><a href="#" onclick="update()">Uppdatera</a></h3></footer>
+    <div id="full">
+        <table id="overlay">
+          <tr>
+            <td><img src="" alt="" /></td>
+          </tr>
+        </table>
+        </div>
+        <script type="text/javascript">
+        var users = [{
+            username: "_frida_my_",
+            id: "178592166"
+        }, {
+            username: "klarakassman",
+            id: "8553215"
+        }, {
+            username: "abcalexandra",
+            id: "5630181"
+        }, {
+            username: "lejonhjerta",
+            id: "244574151"
+        }, {
+            username: "veraedwall",
+            id: "30101718"
+        }, {
+            username: "beahansson",
+            id: "7848063"
+        }, {
+            username: "badrizia",
+            id: "31979878"
+        }, {
+            username: "fridavega",
+            id: "11691495"
+        }, {
+            username: "moasewerin",
+            id: "3222032"
+        }];
+        var numberOfUsers = 1;
+        var userSet = {};
+        var currentUser = 178592166;
+        var pageUser = currentUser;
+        var currentResponse = {};
+        var currentTaggedUser = 0;
+
+        function mostLiked(a, b) {
+            if (a.likes.count < b.likes.count)
+                return 1;
+            if (a.likes.count > b.likes.count)
+                return -1;
+            return 0;
+        }
+
+
+
+        function shuffle(a) {
+            for (let i = a.length; i; i--) {
+                let j = Math.floor(Math.random() * i);
+                [a[i - 1], a[j]] = [a[j], a[i - 1]];
+            }
+        }
+
+        function getFollowers(id) {
+            var $url = 'https://api.instagram.com/v1/users/' + id + '/?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
+            $.ajax({
+                method: "GET",
+                url: $url,
+                dataType: "jsonp",
+                jsonp: "callback",
+                success: function(data) {
+                    $('#' + id + '-followers').html(data.data.counts.followed_by);
+                }
+
+            });
+        }
+
+        function getUserId(username) {
+            var $url = 'https://api.instagram.com/v1/users/search?q=' + username + '&access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
+            $.ajax({
+                method: "GET",
+                url: $url,
+                dataType: "jsonp",
+                jsonp: "callback",
+                success: function(data) {
+                    // console.log(data[0].username);
+                    console.log({
+                        'username': data.data[0].username,
+                        'id': data.data[0].id
+                    });
+                }
+
+            });
+        }
+
+        function getUserFollows(id) {
+            var $url = 'https://api.instagram.com/v1/users/' + id + '/follows?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
+            $.ajax({
+                method: "GET",
+                url: $url,
+                dataType: "jsonp",
+                jsonp: "callback",
+                success: function(data) {
+                    console.log(data);
+                    // console.log({'username' : data.data[0].username, 'id' : data.data[0].id});
+                }
+
+            });
+        }
+
+
+
+        var drawUserPhotos = function(response) {
+            response.data.sort(mostLiked);
+            if ($('#linktree span').length == 0) {
+                $('#linktree').append('<span><a href="#" onclick="scrollTo(' + response.data[0].user.id + ')">@' + response.data[0].user.username + '</a><br/></span>');
+            } else {
+                $('#linktree span').last().append('<span>> <a href="#" onclick="scrollTo(' + response.data[0].user.id + ')">@' + response.data[0].user.username + '</a><br></span>');
+            }
+            var html = '<div class="user" ><div class="userInfo" id="' + response.data[0].user.id + '"><h3>@' + response.data[0].user.username + '</h3><p class="userFollowers"><span id="' + response.data[0].user.id + '-followers">1000</span> följare</p></div><div class="userPhotos"></div</div>';
+            document.getElementById('instafeed').innerHTML += html;
+            var iter = Math.min(response.data.length, 6);
+            for (var i = 0; i < iter; i++) {
+
+                var div = $('<div class="userPhoto"><div class="userPhoto-' + i + '"  id="' + response.data[i].id + '"><p class="numLikes">' + response.data[i].likes.count + ' gillar</p></div></div>');
+                var img = $('<img class="img-' + i + '"/>');
+                img.attr('src',response.data[i].images.standard_resolution.url);
+               
+                $('#' + response.data[0].user.id + '+ .userPhotos').append(div);
+                $('#' + response.data[i].id).prepend(img);
+
+            }
+            
+            
+
+            getFollowers(response.data[0].user.id);
+        }
+
+        var drawLinkPhoto = function(linkPhoto) {
+            //  if ( $('#' + linkPhoto.id) != undefined ) {
+            //     if (currentResponse.data.length > 6) {
+            //         $('#' + linkPhoto.id + ' img').attr('src', currentResponse.data[6].images.standard_resolution.url);
+            //         $('#' + linkPhoto.id + ' .numLikes').html(response.data[6].likes.count + ' gillar');
+            //     } else {
+            //         $('#' + linkPhoto.id).html();
+            //     }
+            // }
+            var html = '<div class="linkPhoto" id="' + linkPhoto.user.id + '"><div class="container"><img src="' + linkPhoto.images.standard_resolution.url + '" class="img-link"><p class="numLikes">' + linkPhoto.likes.count + ' gillar</p><p>taggade @' + linkPhoto.users_in_photo[currentTaggedUser].user.username + '</p></div></div>';
+
+            $('.user').last().append(html);
+            // document.getElementById('instafeed').innerHTML += html;
+        }
+
+        var unDrawLastLinkPhoto = function() {
+            var lp = $('.linkPhoto');
+            if (lp[lp.length - 1].getAttribute('id') == currentUser) {
+
+                lp[lp.length - 1].remove();
+                numberOfUsers--;
+            }
+        }
+
+        function stepBack() {
+
+            var linkPhoto = getLinkPhoto(currentResponse);
+            if (numberOfUsers <= 8) {
+                if (linkPhoto) {
+                    drawLinkPhoto(linkPhoto);
+                    var nextUser = linkPhoto.users_in_photo[currentTaggedUser].user.id;
+                    setTimeout(getPhotos(nextUser), 200);
+                } else {
+                    console.log('feeel');
+                }
+            }
+        }
+        var getLinkPhoto = function(response) {
+            shuffle(response.data);
+            for (x in response.data) {
+                var tagged = response.data[x].users_in_photo;
+                if (tagged.length != 0) {
+                    currentTaggedUser = Math.floor(Math.random() * (response.data[x].users_in_photo.length - 0));
+                    if (tagged[currentTaggedUser].user.id in userSet) continue;
+                    // console.log(response.data[x]);
+                    console.log(response.data[x].users_in_photo[currentTaggedUser].user.username);
+                    numberOfUsers++;
+                    return response.data[x];
+                    // return tagged[0].user.id;
+                }
+            }
+            // if no tagged look in caption
+            // for (x in response.data){
+            //     var pattern = /\B@[a-z0-9_-]+/gi;
+            //     var tagged = response.data[x];
+            //     var users = tagged.match(pattern);
+            //     if (users.length != 0) {
+
+            //     }
+            // }
+            return false;
+        }
+
+        var getPhotos = function(user_id) {
+            userSet[user_id] = true;
+            var feed = new Instafeed({
+                get: 'user',
+                userId: user_id,
+                accessToken: '2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300',
+                resolution: 'standard_resolution',
+                mock: 'true',
+                sortBy: 'most-liked',
+                limit: 50,
+                // template: '<img src="{{image}}" class="{{orientation}}"/><h3>{{likes}}</h3>'
+                success: function(response) {
+                    // console.log(response);
+                    drawUserPhotos(response);
+
+                    var linkPhoto = getLinkPhoto(response);
+                    console.log(numberOfUsers);
+                    if (numberOfUsers <= 8) {
+                        if (linkPhoto) {
+                            currentUser = user_id;
+                            currentResponse = response;
+                            drawLinkPhoto(linkPhoto);
+                            var nextUser = linkPhoto.users_in_photo[currentTaggedUser].user.id;
+                            setTimeout(getPhotos(nextUser), 200);
+                        } else {
+                            // console.log('----\n' + currentResponse.data[0].user.username);
+                            // console.log(response.data[0].user.username + '\n ---');
+
+                            // unDrawLastLinkPhoto();
+                            // stepBack();
+                        }
+                    }
+                },
+                error: function(errorCode) {
+                    console.log('ERROR: ' + errorCode);
+                    console.log(numberOfUsers);
+                    unDrawLastLinkPhoto();
+                    stepBack();
+                }
+            });
+            feed.run();
+        }
+
+        function getUserPhotos(id) {
+            window.stop();
+            $('main').html('');
+            $('#linktree').html('');
+            pageUser = id;
+            numberOfUsers = 1;
+            userSet = {};
+            getPhotos(id);
+        }
+
+        function scrollTo(id) {
+            if (id == 0) {
+                $('html, body').animate({
+                    scrollTop: 0
+                }, 1000);
+            } else {
+                $('html, body').animate({
+                    scrollTop: $('#' + id).offset().top
+                }, 1000);
+            }
+        }
+
+        function update() {
+            scrollTo(0);
+            setTimeout(updateGetNew, 1000);
+        }
+        function updateGetNew(){
+            getUserPhotos(pageUser);
+        }
+
+        function openSlide(photo) {
+            $('#full img').attr('src', photo.attr('src'));
+            $('#full').fadeIn();
+        }
+
+
+        getPhotos(currentUser);
+        for (x in users) {
+            var a = $('<a />');
+            a.attr('onclick', 'getUserPhotos(' + users[x].id + ');');
+            a.attr('href', '#');
+            a.text('@' + users[x].username);
+            $('#users').append(a);
+        }
+
+        $('main').on('click', 'img', function() {
+                    openSlide($(this));
+                });
+
+
+        $(function(){
+            $('#full').click(function(){
+                $(this).fadeOut();
+            });
+        })
+       
+
+        // $(window).on('load', function(e) {
+        //     // $('img').click(function() {
+        //     //     openSlide($(this));
+        //     // });
+
+            
+
+        //     //  var fixmeTop = $('#178592166').offset().top;       // get initial position of the element
+
+        //     // $(window).scroll(function() {                  // assign scroll event listener
+
+        //     //     var currentScroll = $(window).scrollTop(); // get current position
+
+        //     //     if (currentScroll >= fixmeTop) {           // apply position: fixed if you
+        //     //         $('#178592166').css({                      // scroll to that element or below it
+        //     //             position: 'fixed',
+        //     //             top: '0',
+        //     //             right: '0'
+        //     //         });
+        //     //     } else {                                   // apply position: static
+        //     //         $('#178592166').css({                      // if you scroll above it
+        //     //             position: 'static'
+        //     //         });
+        //     //     }
+
+        //     // });
+
+
+        // });
+        </script>
+</body>
+
+</html>
