@@ -34,7 +34,7 @@
     #users a {
         width: 100%;
         font-size: 8em;
-        line-height: 1.5;
+        line-height: 1.3;
         text-decoration: none;
         cursor: pointer;
     }
@@ -43,35 +43,52 @@
         text-decoration: underline;
     }
 
-    .profile-pic {
-        display: none;
+    .profile-pic-div {
+        /*display: none;*/
+        visibility: hidden;
+        opacity: 0;
+        transition-property: opacity;
+        transition-duration: 100ms;
         position: absolute;
+        font-size: 18px;
         /*top: 10%;*/
         /*left: 10%;*/
+        width: 20%;
         z-index: -1;
-        width: auto;
+    }
+        
+
+
+    .profile-pic {
+        width: 100%;
         height: auto;
-        max-width: 20%;
-        max-height: 30%;
+        /*max-width: 20%;
+        max-height: 30%;*/
+        /*position:absolute;*/
     }
 
     #users a:nth-child(even) .profile-pic {
         /*right: 10%;*/
     }
 
-    #users a:hover .profile-pic {
+    #users a:hover .profile-pic-div {
         display: block;
+        opacity: 1;
+        visibility: visible;
     }
     
     nav {
         padding: 3%;
+        padding-top: 1.8%;
         width: 50%;
         box-sizing: border-box;
         float: left;
     }
+
+
     
     .nav-about {
-        width: 25%;
+        width: 10%;
         position: fixed;
         right: 3%;
         text-align: right;
@@ -101,17 +118,23 @@
         text-decoration: none;
     }
     
-    h1 a:hover {
+    h1 a:hover, .scrolled h1 a {
         visibility: hidden;
     }
-    
-    h1 a:hover:before {
+
+    h1 a:before {
         content: url('pil.svg');
         display: inline-block;
         transform-origin: 0 0;
         transform: scale(1.5);
-        visibility: visible;
+        visibility: hidden;
         width: 100%;
+        position: absolute;
+    }
+    
+    h1 a:hover:before, .scrolled h1 a:before {
+        visibility: visible;
+
     }
     
     header {
@@ -134,6 +157,7 @@
         margin-top: 0;
         padding-bottom: 15%;
         box-sizing: border-box;
+        position: absolute;
     }
     
     .userPhotos {
@@ -217,15 +241,15 @@
     #linktree {
         position: fixed;
         left: 3%;
-        bottom: 0%;
+        bottom: -8.5em;
         padding-bottom: 3%;
-        line-height: 2;
+        line-height: 2.5;
+        font-size: 2em;
     }
     
     #linktree span {
         padding-left: 0;
-        display: inline-block;
-        font-size: 1em;
+        display: block;
     }
     
     #linktree span:first-child {
@@ -290,7 +314,7 @@
     <main id="instafeed">
     </main>
     <footer>
-        <h3><a href="#" onclick="update()">Uppdatera</a></h3></footer>
+        <h3><a id="update" href="#" onclick="update()">Laddar...</a></h3></footer>
     <div id="full">
         <table id="overlay">
           <tr>
@@ -329,23 +353,23 @@
         // }];
 
         var users = [{
-            username: "_frida_my_",
-            id: "178592166"
-        }, {
             username: "abcalexandra",
             id: "5630181"
         }, {
             username: "lejonhjerta",
             id: "244574151"
         }, {
-            username: "veraedwall",
-            id: "30101718"
+            username: "pamelanorah",
+            id: "6905343"
         }, {
-            username: "beahansson",
-            id: "7848063"
+            username: "babe_ebba",
+            id: "32446591"
         }, {
             username: "badrizia",
             id: "31979878"
+        },{
+            username: "mactacky",
+            id: "253666439"
         }];
 
         var numberOfUsers = 1;
@@ -354,6 +378,7 @@
         var pageUser = currentUser;
         var currentResponse = {};
         var currentTaggedUser = 0;
+        var treeUsers = [];
 
         function mostLiked(a, b) {
             if (a.likes.count < b.likes.count)
@@ -380,7 +405,21 @@
                 dataType: "jsonp",
                 jsonp: "callback",
                 success: function(data) {
-                    $('#' + id + '-followers').html(data.data.counts.followed_by);
+                    $('#' + id + '-followers').html(format(data.data.counts.followed_by));
+                }
+
+            });
+        }
+
+         function getFollowersProfile(id) {
+            var $url = 'https://api.instagram.com/v1/users/' + id + '/?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
+            $.ajax({
+                method: "GET",
+                url: $url,
+                dataType: "jsonp",
+                jsonp: "callback",
+                success: function(data) {
+                    $('#' + id + '-profile span').first().html(format(data.data.counts.followed_by) + " följare");
                 }
 
             });
@@ -423,17 +462,15 @@
 
         var drawUserPhotos = function(response) {
             response.data.sort(mostLiked);
-            if ($('#linktree span').length == 0) {
-                $('#linktree').append('<span><a href="#" onclick="scrollTo(' + response.data[0].user.id + ')">@' + response.data[0].user.username + '</a><br/></span>');
-            } else {
-                $('#linktree span').last().append('<span>> <a href="#" onclick="scrollTo(' + response.data[0].user.id + ')">@' + response.data[0].user.username + '</a><br></span>');
-            }
+            treeUsers.push(response.data[0].user);
+                // $('#linktree').append('<span><a href="#" onclick="scrollTo(' + response.data[0].user.id + ')">@' + response.data[0].user.username + '</a><br/></span>');
+
             var html = '<div class="user" ><div class="userInfo" id="' + response.data[0].user.id + '"><h3>@' + response.data[0].user.username + '</h3><p class="userFollowers"><span id="' + response.data[0].user.id + '-followers">1000</span> följare</p></div><div class="userPhotos"></div</div>';
             document.getElementById('instafeed').innerHTML += html;
             var iter = Math.min(response.data.length, 6);
             for (var i = 0; i < iter; i++) {
 
-                var div = $('<div class="userPhoto"><div class="userPhoto-' + i + '"  id="' + response.data[i].id + '"><p class="numLikes">' + response.data[i].likes.count + ' gillar</p></div></div>');
+                var div = $('<div class="userPhoto"><div class="userPhoto-' + i + '"  id="' + response.data[i].id + '"><p class="numLikes">' + format(response.data[i].likes.count) + ' gillar</p></div></div>');
                 var img = $('<img class="img-' + i + '"/>');
                 img.attr('src',response.data[i].images.standard_resolution.url);
                
@@ -555,6 +592,7 @@
 
         function getUserPhotos(id) {
             window.stop();
+            $('#update').html('Laddar...');
             $('main').html('');
             $('#linktree').html('');
             pageUser = id;
@@ -562,6 +600,11 @@
             userSet = {};
             getPhotos(id);
             setTimeout(scrollTo,1000);
+            setTimeout(ready,2000);
+        }
+
+        function ready(){
+            $('#update').html('Uppdatera');
         }
 
         function scrollTo(id) {
@@ -581,6 +624,7 @@
         }
 
         function update() {
+            $('#update').html('Laddar...');
             scrollTo(0);
             setTimeout(updateGetNew, 1000);
         }
@@ -590,7 +634,14 @@
 
         function openSlide(photo) {
             $('#full img').attr('src', photo.attr('src'));
-            $('#full').fadeIn();
+            $('#full').fadeIn(250);
+        }
+
+        function format(num){
+            var n = num.toString(), p = n.indexOf('.');
+            return n.replace(/\d(?=(?:\d{3})+(?:\.|$))/g, function($0, i){
+                return p<0 || i<p ? ($0+' ') : $0;
+            });
         }
 
 
@@ -600,19 +651,27 @@
             a.attr('onclick', 'getUserPhotos(' + users[x].id + ');');
             // a.attr('href', '');
             a.text('@' + users[x].username);
+            var div = $('<div class="profile-pic-div"/>');
             var img = $('<img class="profile-pic"/>');
-            img.attr('src', 'img/' + users[x].username + '.jpg');
+            img.attr('src', 'img/' + users[x].username.replace('_','') + '.jpg');
             if (x % 2 === 0){
-                img.css('right', 10+x*3 + '%');
-                img.css('bottom', 10+x*5 + '%');
+                div.css('right', 10+x*3 + '%');
+                div.css('bottom', 10+x*5 + '%');
             }
             else {
-                 img.css('left', 10+x*2 + '%');
-                img.css('top', 15+x*5 + '%');
+                 div.css('left', 10+x*2 + '%');
+                div.css('top', 15+x*5 + '%');
             } 
-            img.appendTo(a);
+            var p = $('<p class="followers" id="' + users[x].id + '-profile"><span class="profile-followers"/></p>');
+            img.appendTo(div);
+            p.appendTo(div);
+            div.appendTo(a);
             $('#users').append(a);
+
+            getFollowersProfile(users[x].id);
         }
+
+       
 
         $('main').on('click', 'img', function() {
                     openSlide($(this));
@@ -623,8 +682,59 @@
             $('#full').click(function(){
                 $(this).fadeOut();
             });
-        })
+
+        });
        
+       $(window).on('load',function(e){
+            $('#update').html('Uppdatera');
+       });
+
+      // Hide Header on on scroll down
+            var didScroll;
+            var lastScrollTop = 0;
+            var delta = 5;
+            var navbarHeight = 0;
+            
+            $(window).scroll(function(event){
+                didScroll = true;
+            });
+            
+            setInterval(function() {
+                if (didScroll) {
+                    hasScrolled();
+                    didScroll = false;
+                }
+            }, 250);
+            
+            function hasScrolled() {
+                var st = $(this).scrollTop();
+                
+                // Make sure they scroll more than delta
+                if(Math.abs(lastScrollTop - st) <= delta){
+                    
+                    lastScrollTop = st;
+                    return;
+                }
+                // If they scrolled down and are past the navbar, add class .nav-up.
+                // This is necessary so you never see what is "behind" the navbar.
+                if ( st > navbarHeight){
+                    // Scroll Down
+                    $('header').first().addClass('scrolled');
+
+                    // $('.bottom').removeClass('nav-up');
+                } else {
+                    // Scroll Up
+                    $('header').first().removeClass('scrolled');
+                    // if (lastScrollTop - st > 0){
+                    // //if(st + $(window).height() < $(document).height()) {
+                    //     // $('.top').removeClass('nav-down');
+                    //     // $('.bottom').addClass('nav-up');
+                        
+                    // }
+                }
+                lastScrollTop = st;
+            }
+
 
         // $(window).on('load', function(e) {
         //     // $('img').click(function() {
@@ -633,25 +743,28 @@
 
             
 
-        //     //  var fixmeTop = $('#178592166').offset().top;       // get initial position of the element
+        //      var fixmeTop = $('#178592166').offset().top;       // get initial position of the element
 
-        //     // $(window).scroll(function() {                  // assign scroll event listener
+        //     $(window).scroll(function() {                  // assign scroll event listener
 
-        //     //     var currentScroll = $(window).scrollTop(); // get current position
+        //         var currentScroll = $(window).scrollBottom(); // get current position
 
-        //     //     if (currentScroll >= fixmeTop) {           // apply position: fixed if you
-        //     //         $('#178592166').css({                      // scroll to that element or below it
-        //     //             position: 'fixed',
-        //     //             top: '0',
-        //     //             right: '0'
-        //     //         });
-        //     //     } else {                                   // apply position: static
-        //     //         $('#178592166').css({                      // if you scroll above it
-        //     //             position: 'static'
-        //     //         });
-        //     //     }
+        //         if (currentScroll == fixmeTop) {           // apply position: fixed if you
+        //             // $('#178592166').css({                      // scroll to that element or below it
+        //             //     position: 'fixed',
+        //             //     top: '0',
+        //             //     right: '0'
+        //             // });
+        //             console.log('tjaaa');
+        //             $('#linktree').append('<span><a href="#" onclick="scrollTo(' + treeUsers[0].id + ')">@' + treeUsers[0].username + '</a><br/></span>');
+        //         } else {                                   // apply position: static
+        //             // $('#178592166').css({                      // if you scroll above it
+        //             //     position: 'static'
+        //             // });
+        //             $('#linktree span').last().remove();
+        //         }
 
-        //     // });
+        //     });
 
 
         // });
