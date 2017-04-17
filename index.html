@@ -157,7 +157,7 @@
         margin-top: 0;
         padding-bottom: 15%;
         box-sizing: border-box;
-        position: absolute;
+        /*position: absolute;*/
     }
     
     .userPhotos {
@@ -307,7 +307,7 @@
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
     <header>
-        <h1><a href="#" onclick="scrollTo(0)">Samtida<br/>Svensk<br/>Fotografi</a></h1></header>
+        <h1><a href="#" onclick="scrollTo('top')">Samtida<br/>Svensk<br/>Fotografi</a></h1></header>
     <nav id="users"></nav>
     <nav class="nav-about"><a href="#">?</a></nav>
     <aside id="linktree"></aside>
@@ -463,7 +463,7 @@
         var drawUserPhotos = function(response) {
             response.data.sort(mostLiked);
             treeUsers.push(response.data[0].user);
-                // $('#linktree').append('<span><a href="#" onclick="scrollTo(' + response.data[0].user.id + ')">@' + response.data[0].user.username + '</a><br/></span>');
+                $('#linktree').append('<span><a href="#" onclick="scrollTo(' + response.data[0].user.id + ')">@' + response.data[0].user.username + '</a><br/></span>');
 
             var html = '<div class="user" ><div class="userInfo" id="' + response.data[0].user.id + '"><h3>@' + response.data[0].user.username + '</h3><p class="userFollowers"><span id="' + response.data[0].user.id + '-followers">1000</span> följare</p></div><div class="userPhotos"></div</div>';
             document.getElementById('instafeed').innerHTML += html;
@@ -599,7 +599,7 @@
             numberOfUsers = 1;
             userSet = {};
             getPhotos(id);
-            setTimeout(scrollTo,1000);
+            setTimeout(scrollTo,1500);
             setTimeout(ready,2000);
         }
 
@@ -608,7 +608,7 @@
         }
 
         function scrollTo(id) {
-            if (id == 0) {
+            if (id == 'top') {
                 $('html, body').animate({
                     scrollTop: 0
                 }, 1000);
@@ -625,7 +625,7 @@
 
         function update() {
             $('#update').html('Laddar...');
-            scrollTo(0);
+            scrollTo('top');
             setTimeout(updateGetNew, 1000);
         }
         function updateGetNew(){
@@ -742,26 +742,30 @@
         //     // });
 
             
-
-        //      var fixmeTop = $('#178592166').offset().top;       // get initial position of the element
+        //     for (x in treeUsers) {
+        //         treeUsers[x].offset = $('#' + treeUsers[x].id).offset().top
+        //     }
+        //      var fixmeTop = $('body').offset().bottom;       // get initial position of the element
+            
 
         //     $(window).scroll(function() {                  // assign scroll event listener
 
-        //         var currentScroll = $(window).scrollBottom(); // get current position
-
-        //         if (currentScroll == fixmeTop) {           // apply position: fixed if you
-        //             // $('#178592166').css({                      // scroll to that element or below it
-        //             //     position: 'fixed',
-        //             //     top: '0',
-        //             //     right: '0'
-        //             // });
-        //             console.log('tjaaa');
-        //             $('#linktree').append('<span><a href="#" onclick="scrollTo(' + treeUsers[0].id + ')">@' + treeUsers[0].username + '</a><br/></span>');
-        //         } else {                                   // apply position: static
-        //             // $('#178592166').css({                      // if you scroll above it
-        //             //     position: 'static'
-        //             // });
-        //             $('#linktree span').last().remove();
+        //         var currentScroll = $(window).scroll() + $(window).height(); // get current position
+        //          for (x in treeUsers) {
+        //             if (currentScroll == treeUsers[x]) {           // apply position: fixed if you
+        //                 // $('#178592166').css({                      // scroll to that element or below it
+        //                 //     position: 'fixed',
+        //                 //     top: '0',
+        //                 //     right: '0'
+        //                 // });
+        //                 console.log('tjaaa');
+        //                 $('#linktree').append('<span><a href="#" onclick="scrollTo(' + treeUsers[x].id + ')">@' + treeUsers[x].username + '</a><br/></span>');
+        //             } else {                                   // apply position: static
+        //                 // $('#178592166').css({                      // if you scroll above it
+        //                 //     position: 'static'
+        //                 // });
+        //                 $('#linktree span').last().remove();
+        //             }
         //         }
 
         //     });
