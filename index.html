@@ -157,7 +157,14 @@
         margin-top: 0;
         padding-bottom: 15%;
         box-sizing: border-box;
+        line-height: 1.5;
         /*position: absolute;*/
+    }
+
+    .userInfo img {
+        width: 20%;
+        transform-origin: left;
+        transform: translate(50%, -50%) rotate(90deg);
     }
     
     .userPhotos {
@@ -184,37 +191,49 @@
         float: left;
     }
     
-    .userPhoto-0 {
+    .userPhoto:nth-child(6n+1) div {
         width: 70%;
     }
     
-    .userPhoto-1 {
+    .userPhoto:nth-child(6n+2) div {
         width: 40%;
         margin-top: -20%;
     }
     
-    .userPhoto-2 {
+    .userPhoto:nth-child(6n+3) div {
         width: 30%;
         margin-left: 30%;
         margin-top: -20%;
     }
     
-    .userPhoto-3 {
+    .userPhoto:nth-child(6n+4) div {
         width: 55%;
         margin-left: -10%;
         margin-top: -20%;
     }
     
-    .userPhoto-4 {
+    .userPhoto:nth-child(6n+5) div {
         width: 40%;
         margin-left: -30%;
         margin-top: -40%;
     }
     
-    .userPhoto-5 {
+    .userPhoto:nth-child(6n+6) div {
         width: 55%;
         margin-left: -20%;
         margin-top: -20%;
+    }
+
+
+    .numLikes:before {
+        background: url('img/handcursor.svg') no-repeat;
+        background-size: 25% 25%;
+        margin-top: 0.5%;
+        margin-left: 0.3%;
+        position: absolute;
+        width: 100px;
+        content: " ";
+        height: 100px;
     }
     
     .linkPhoto {
@@ -323,6 +342,7 @@
         </table>
         </div>
         <script type="text/javascript">
+        
         // var users = [{
         //     username: "_frida_my_",
         //     id: "178592166"
@@ -374,11 +394,14 @@
 
         var numberOfUsers = 1;
         var userSet = {};
+        userStack = [];
         var currentUser = 178592166;
         var pageUser = currentUser;
         var currentResponse = {};
         var currentTaggedUser = 0;
         var treeUsers = [];
+        var userMedia = {};
+        var nRequests = 0;
 
         function mostLiked(a, b) {
             if (a.likes.count < b.likes.count)
@@ -398,6 +421,8 @@
         }
 
         function getFollowers(id) {
+            nRequests++;
+            console.log(nRequests);
             var $url = 'https://api.instagram.com/v1/users/' + id + '/?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
             $.ajax({
                 method: "GET",
@@ -412,6 +437,8 @@
         }
 
          function getFollowersProfile(id) {
+            nRequests++;
+            console.log(nRequests);
             var $url = 'https://api.instagram.com/v1/users/' + id + '/?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
             $.ajax({
                 method: "GET",
@@ -426,6 +453,8 @@
         }
 
         function getUserId(username) {
+            nRequests++;
+            console.log(nRequests);
             var $url = 'https://api.instagram.com/v1/users/search?q=' + username + '&access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
             $.ajax({
                 method: "GET",
@@ -444,6 +473,8 @@
         }
 
         function getUserFollows(id) {
+            nRequests++;
+            console.log(nRequests);
             var $url = 'https://api.instagram.com/v1/users/' + id + '/follows?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
             $.ajax({
                 method: "GET",
@@ -460,31 +491,132 @@
 
 
 
-        var drawUserPhotos = function(response) {
-            response.data.sort(mostLiked);
-            treeUsers.push(response.data[0].user);
-                $('#linktree').append('<span><a href="#" onclick="scrollTo(' + response.data[0].user.id + ')">@' + response.data[0].user.username + '</a><br/></span>');
-
-            var html = '<div class="user" ><div class="userInfo" id="' + response.data[0].user.id + '"><h3>@' + response.data[0].user.username + '</h3><p class="userFollowers"><span id="' + response.data[0].user.id + '-followers">1000</span> följare</p></div><div class="userPhotos"></div</div>';
-            document.getElementById('instafeed').innerHTML += html;
-            var iter = Math.min(response.data.length, 6);
-            for (var i = 0; i < iter; i++) {
-
-                var div = $('<div class="userPhoto"><div class="userPhoto-' + i + '"  id="' + response.data[i].id + '"><p class="numLikes">' + format(response.data[i].likes.count) + ' gillar</p></div></div>');
-                var img = $('<img class="img-' + i + '"/>');
-                img.attr('src',response.data[i].images.standard_resolution.url);
-               
-                $('#' + response.data[0].user.id + '+ .userPhotos').append(div);
-                $('#' + response.data[i].id).prepend(img);
-
+        function getTaggedUser(id) {
+            if (currentResponse.data[currentResponse.currentItem].currentTaggedUser == undefined) {
+                currentResponse.data[currentResponse.currentItem].currentTaggedUser = 0;
+            } 
+            if (currentResponse.data[currentResponse.currentItem].currentTaggedUser == currentResponse.data[currentResponse.currentItem].users_in_photo.length ) {
+                getCommentUser(0);
+                return;
             }
-            
-            
 
-            getFollowers(response.data[0].user.id);
+            getPhotos(currentResponse.data[currentResponse.currentItem].users_in_photo[currentResponse.data[currentResponse.currentItem].currentTaggedUser].user.id, 'tagged');
+
+        }
+             
+
+        function checkTaggedResponse(response) {
+            if (response == false) {
+                currentResponse.data[currentResponse.currentItem].currentTaggedUser++;
+                getTaggedUser(0);
+            } else {
+                $('.userPhotos .numLikes').last().html('<strong>' + response.data[0].user.username + '</strong> taggades i fotot');
+                getPhotos(response.data[0].user.id);
+            }
+
         }
 
-        var drawLinkPhoto = function(linkPhoto) {
+
+        function getCommentUser(id) {
+
+            if (currentResponse.data[currentResponse.currentItem].comments.count == 0 ) {
+                return getPhotos(currentResponse.data[0].user.id);
+                
+            }
+
+            if (currentResponse.data[currentResponse.currentItem].currentCommentUser == undefined) {
+                currentResponse.data[currentResponse.currentItem].currentCommentUser = 0;
+            }
+            if (currentResponse.data[currentResponse.currentItem].comments.data == undefined) {
+                nRequests++;
+                console.log(nRequests);
+                var $url = 'https://api.instagram.com/v1/media/' + currentResponse.data[currentResponse.currentItem].id + '/comments?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
+                $.ajax({
+                    method: "GET",
+                    url: $url,
+                    dataType: "jsonp",
+                    jsonp: "callback",
+                    success: function(response) {
+                        console.log(response.data);
+                        currentResponse.data[currentResponse.currentItem].comments.data = response.data;
+                        getCommentUser(0);
+                        // console.log({'username' : data.data[0].username, 'id' : data.data[0].id});
+                    },
+                    error: function(error) {
+                        console.log(error);//getCommentUser(0);
+                    }
+
+                });
+                return;
+            }
+
+            if (currentResponse.data[currentResponse.currentItem].currentCommentUser == currentResponse.data[currentResponse.currentItem].comments.data.length ) {
+                return getPhotos(currentResponse.data[0].user.id);
+                
+            }
+            // currentResponse.currentItem++;
+            getPhotos(currentResponse.data[currentResponse.currentItem].comments.data[currentResponse.data[currentResponse.currentItem].currentCommentUser].from.id, 'comment');
+         
+            
+        }
+
+        function checkCommentResponse(response) {
+            if (response == false) {
+                currentResponse.data[currentResponse.currentItem].currentCommentUser++;
+                getCommentUser(0);
+            } else {
+                $('.userPhotos .numLikes').last().html('<strong>' + response.data[0].user.username + '</strong> : ' + currentResponse.data[currentResponse.currentItem].comments.data[currentResponse.data[currentResponse.currentItem].currentCommentUser].text);
+                getPhotos(response.data[0].user.id);
+            }
+        }
+
+
+
+        var drawUserPhotos = function(response) {
+            // response.data.sort(mostLiked);
+            // treeUsers.push(response.data[0].user);
+                // $('#linktree').append('<span><a href="#" onclick="scrollTo(' + response.data[0].user.id + ')">@' + response.data[0].user.username + '</a><br/></span>');
+            if ((userStack[userStack.length-1] != response.data[0].user.id) ) {
+                userStack.push(response.data[0].user.id);
+                // drawLinkPhoto(response);
+                    var html = '<div class="user" ><div class="userInfo" id="' + response.data[0].user.id + '"><p class="userFollowers"><strong>' + response.data[0].user.username + '<strong><br/><span id="' + response.data[0].user.id + '-followers">1000</span> följare</p><img src="pil.svg"/></div><div class="userPhotos"></div</div>';
+                // var html = '<div class="user"><div class="userInfo" id="' + response.data[0].user.id + '"></div><div class="userPhotos"></div></div>';
+                document.getElementById('instafeed').innerHTML += html;
+            }
+        
+            
+            var iter = Math.min(response.data.length, response.currentItem + 4);
+            
+            for (response.currentItem ; response.currentItem < iter ; response.currentItem++) {
+
+                var div = $('<div class="userPhoto"><div class="userPhoto-' + response.currentItem + '"  id="' + response.data[response.currentItem].id + '"><p class="numLikes">' + format(response.data[response.currentItem].likes.count) + ' gillar</p></div></div>');
+                var img = $('<img class="img-' + response.currentItem + '"/>');
+                img.attr('src',response.data[response.currentItem].images.standard_resolution.url);
+               
+                $('#' + response.data[0].user.id + '+ .userPhotos').append(div);
+                $('#' + response.data[response.currentItem].id).prepend(img);
+                if (response.currentItem + 1 == iter ){
+                    // getFollowers(response.data[0].user.id);
+                    response.currentItem++;
+                    if (!(response.data[response.currentItem].users_in_photo.length == 0)) {
+                        return {'action' : 'getTagged', 'id' : response.data[response.currentItem].id};
+                    } else if (!(response.data[response.currentItem].comments.count == 0)) {
+                        return {'action' : 'getComment', 'id' : response.data[response.currentItem].id};
+                    } else if (response.currentItem == 15) {
+                        if (userStack.length > 1) userStack.pop();
+                        if (userStack.length > 1) userStack.pop();
+                        if (userStack.length > 1) userStack.pop();
+                        return drawUserPhotos(userMedia[userStack[userStack.length-1]]);
+                    } else {
+                        
+                        return drawUserPhotos(response);
+                    }
+                }
+            }
+            
+        }
+
+        var drawLinkPhoto = function(response) {
             //  if ( $('#' + linkPhoto.id) != undefined ) {
             //     if (currentResponse.data.length > 6) {
             //         $('#' + linkPhoto.id + ' img').attr('src', currentResponse.data[6].images.standard_resolution.url);
@@ -493,7 +625,7 @@
             //         $('#' + linkPhoto.id).html();
             //     }
             // }
-            var html = '<div class="linkPhoto" id="' + linkPhoto.user.id + '"><div class="container"><img src="' + linkPhoto.images.standard_resolution.url + '" class="img-link"><p class="numLikes">' + linkPhoto.likes.count + ' gillar</p><p>taggade @' + linkPhoto.users_in_photo[currentTaggedUser].user.username + '</p></div></div>';
+            var html = '<div class="linkPhoto" id="' + response.data[0].user.id + '"><div class="container"><p class="userName">' + response.data[0].user.username + '<br/>1000 följare</p><img src="pil.svg" class="img-link"></div></div>';
 
             $('.user').last().append(html);
             // document.getElementById('instafeed').innerHTML += html;
@@ -513,6 +645,7 @@
             var linkPhoto = getLinkPhoto(currentResponse);
             if (numberOfUsers <= 8) {
                 if (linkPhoto) {
+                   
                     drawLinkPhoto(linkPhoto);
                     var nextUser = linkPhoto.users_in_photo[currentTaggedUser].user.id;
                     setTimeout(getPhotos(nextUser), 200);
@@ -547,47 +680,123 @@
             return false;
         }
 
-        var getPhotos = function(user_id) {
+
+        function drawNextPhotos(response) {
+            // console.log(response);
+            if (response == false) {
+                console.log('Private Profile probably')
+                //Go back to previous and continue or something similar
+                return;
+            }
+
+            next = drawUserPhotos(response);
+            
+            console.log(numberOfUsers);
+
+            // $('.userPhotos .numLikes').last().html(respone.data[i].users_in_photo[0].username + ' taggades i fotot');
+            currentUser = response.data[0].user.id;
+            currentResponse = userMedia[response.data[0].user.id];
+            if (userStack.length <= 12) {
+             
+
+                if (next.action == 'getTagged') {
+                    getTaggedUser(next.id);
+                }
+                else if (next.action == 'getComment') {
+                    getCommentUser(next.id);
+                }
+
+                else {
+                    drawNextPhotos(currentResponse);
+                }
+
+                // else {
+                //     getTag(next.id);
+                // }
+
+                // var linkPhoto = getLinkPhoto(response);
+
+                // if (linkPhoto) {
+                //     currentUser = user_id;
+                //     currentResponse = response;
+                //     drawLinkPhoto(linkPhoto);
+                //     var nextUser = linkPhoto.users_in_photo[currentTaggedUser].user.id;
+                //     setTimeout(getPhotos(nextUser), 200);
+                // } else {
+                //     // console.log('----\n' + currentResponse.data[0].user.username);
+                //     // console.log(response.data[0].user.username + '\n ---');
+
+                //     // unDrawLastLinkPhoto();
+                //     // stepBack();
+                // }
+            }
+        }
+
+        var getPhotos = function(user_id, action = false) {
             userSet[user_id] = true;
-            var feed = new Instafeed({
-                get: 'user',
-                userId: user_id,
-                accessToken: '2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300',
-                resolution: 'standard_resolution',
-                mock: 'true',
-                sortBy: 'most-liked',
-                limit: 50,
-                // template: '<img src="{{image}}" class="{{orientation}}"/><h3>{{likes}}</h3>'
-                success: function(response) {
-                    console.log(response);
-                    drawUserPhotos(response);
+            if (userMedia[user_id] == undefined) {
+                nRequests++;
+                console.log(nRequests);
+                var $url = 'https://api.instagram.com/v1/users/' + user_id + '/media/recent?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300&count=30';
+                $.ajax({
+                    method: "GET",
+                    url: $url,
+                    dataType: "jsonp",
+                    jsonp: "callback",
+                    success: function(response) {
+                        response.currentItem = 0;
+                        console.log(action);
+                        console.log(response);
+                        if (response.data == undefined) {
+                            if (!action) {
+                                drawNextPhotos(false);
+                            } else if (action == 'tagged') { 
+                                checkTaggedResponse(false);
+                            } else if (action == 'comment') {
+                                checkCommentResponse(false);
+                            }
 
-                    var linkPhoto = getLinkPhoto(response);
-                    console.log(numberOfUsers);
-                    if (numberOfUsers <= 8) {
-                        if (linkPhoto) {
-                            currentUser = user_id;
-                            currentResponse = response;
-                            drawLinkPhoto(linkPhoto);
-                            var nextUser = linkPhoto.users_in_photo[currentTaggedUser].user.id;
-                            setTimeout(getPhotos(nextUser), 200);
                         } else {
-                            // console.log('----\n' + currentResponse.data[0].user.username);
-                            // console.log(response.data[0].user.username + '\n ---');
+                            shuffle(response.data);
+                            // console.log('Log response.data[0]:');
+                            // console.log(response.data[0]);
 
-                            // unDrawLastLinkPhoto();
-                            // stepBack();
+                            userMedia[response.data[0].user.id] = response;
+                            if (!action) {
+                                drawNextPhotos(response);
+                            } else if (action == 'tagged') { 
+                                checkTaggedResponse(response);
+                            } else if (action == 'comment') {
+                                checkCommentResponse(response);
+                            }
+                        }
+                    },
+                    error: function(errorCode) {
+                        console.log('ERROR: ' + errorCode);
+                        console.log(numberOfUsers);
+                        if (errorCode.code == 429) {
+                            window.stop();
+                        }
+                        // unDrawLastLinkPhoto();
+                        // stepBack();
+                        if (!action) {
+                            drawNextPhotos(false);
+                        } else if (action == 'tagged') { 
+                            checkTaggedResponse(false);
+                        } else if (action == 'comment') {
+                            checkCommentResponse(false);
                         }
                     }
-                },
-                error: function(errorCode) {
-                    console.log('ERROR: ' + errorCode);
-                    console.log(numberOfUsers);
-                    unDrawLastLinkPhoto();
-                    stepBack();
+                });
+            } else {  
+                if (!action) {
+                    drawNextPhotos(userMedia[user_id]);
+                } else if (action == 'tagged') { 
+                    checkTaggedResponse(userMedia[user_id]);
+                } else if (action == 'comment') {
+                    checkCommentResponse(userMedia[user_id]);
                 }
-            });
-            feed.run();
+            }
         }
 
         function getUserPhotos(id) {
@@ -598,6 +807,7 @@
             pageUser = id;
             numberOfUsers = 1;
             userSet = {};
+            userStack = [];
             getPhotos(id);
             setTimeout(scrollTo,1500);
             setTimeout(ready,2000);
@@ -612,7 +822,7 @@
                 $('html, body').animate({
                     scrollTop: 0
                 }, 1000);
-            } else if (id == null) {
+            } else if (id == undefined) {
                 $('html, body').animate({
                     scrollTop: $('.userInfo').first().offset().top
                 }, 1000);
