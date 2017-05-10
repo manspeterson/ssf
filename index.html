@@ -18,6 +18,8 @@
         font-family: 'Gridnik';
         margin-top: 0;
         margin-left: 0;
+        margin:0;
+        float:left;
     }
     
     a,
@@ -33,8 +35,8 @@
 
     #users a {
         width: 100%;
-        font-size: 8em;
-        line-height: 1.3;
+        font-size: 8vw;
+        line-height: 1.15;
         text-decoration: none;
         cursor: pointer;
     }
@@ -81,8 +83,14 @@
         padding: 3%;
         padding-top: 1.8%;
         width: 50%;
+        height: 100%;
+        min-height: 100vh;
         box-sizing: border-box;
         float: left;
+    }
+
+    .profile-pic-div p {
+        margin-top: 0.5%;
     }
 
 
@@ -90,11 +98,12 @@
     .nav-about {
         width: 10%;
         position: fixed;
-        right: 3%;
+        right: 0%;
         text-align: right;
-        font-size: 8em;
+        font-size: 8vw;
         padding: 3%;
-        line-height: 1;
+        padding-top: 1.8%;
+        line-height: 1.15;
         box-sizing: border-box;
     }
     
@@ -104,8 +113,8 @@
     
     h1,
     h3 {
-        font-size: 2em;
-        line-height: 1.13;
+        font-size: 2vw;
+        line-height: 1.0;
         margin: 0;
     }
     
@@ -126,7 +135,7 @@
         content: url('pil.svg');
         display: inline-block;
         transform-origin: 0 0;
-        transform: scale(1.5);
+        transform: scale(1.2);
         visibility: hidden;
         width: 100%;
         position: absolute;
@@ -139,7 +148,7 @@
     
     header {
         padding: 3%;
-        width: 25%;
+        width: 20%;
         float: left;
         box-sizing: border-box;
     }
@@ -161,14 +170,20 @@
         /*position: absolute;*/
     }
 
-    .userInfo img {
+    .userPhoto-info img {
         width: 20%;
         transform-origin: left;
-        transform: translate(50%, -50%) rotate(90deg);
+        transform: scale(0.8) translate(50%, -50%) rotate(90deg);
+    }
+
+
+
+    .userPhoto-info.back img {
+        transform: scale(0.8) translate(50%, 0%) rotate(-90deg);
     }
     
     .userPhotos {
-        width: 70%;
+        width: 75%;
         float: right;
     }
     
@@ -177,9 +192,10 @@
     }
     
     .userPhoto {
-        width: 50%;
+        width: 30%;
         padding-bottom: 25%;
-        float: right;
+        float: left;
+        box-sizing: border-box;
     }
     
     .userPhoto:nth-child(even) {
@@ -192,12 +208,12 @@
     }
     
     .userPhoto:nth-child(6n+1) div {
-        width: 70%;
+        width: 100%;
     }
     
     .userPhoto:nth-child(6n+2) div {
-        width: 40%;
-        margin-top: -20%;
+        width: 60%;
+        margin-top: 0%;
     }
     
     .userPhoto:nth-child(6n+3) div {
@@ -224,8 +240,17 @@
         margin-top: -20%;
     }
 
+    .userFollowers {
+        margin:0;
+        line-height: 1.3;
+    }
 
-    .numLikes:before {
+    .userPhoto-Info {
+        width: 100%;
+    }
+
+
+    .link:before {
         background: url('img/handcursor.svg') no-repeat;
         background-size: 25% 25%;
         margin-top: 0.5%;
@@ -237,7 +262,7 @@
     }
     
     .linkPhoto {
-        width: 70%;
+        width: 75%;
         float: right;
         margin-top: -20%;
         padding-right: 10%;
@@ -278,6 +303,7 @@
     footer {
         width: 75%;
         padding: 3%;
+        padding-left:0;
         box-sizing: border-box;
         float: right;
         height: 400px;
@@ -326,11 +352,12 @@
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
     <header>
-        <h1><a href="#" onclick="scrollTo('top')">Samtida<br/>Svensk<br/>Fotografi</a></h1></header>
+        <h1><a href="#" >Samtida<br/>Svensk<br/>Fotografi</a></h1></header>
     <nav id="users"></nav>
     <nav class="nav-about"><a href="#">?</a></nav>
     <aside id="linktree"></aside>
     <main id="instafeed">
+    <div class="user"><div class="userPhotos"></div>
     </main>
     <footer>
         <h3><a id="update" href="#" onclick="update()">Laddar...</a></h3></footer>
@@ -421,24 +448,29 @@
         }
 
         function getFollowers(id) {
-            nRequests++;
-            console.log(nRequests);
-            var $url = 'https://api.instagram.com/v1/users/' + id + '/?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
-            $.ajax({
-                method: "GET",
-                url: $url,
-                dataType: "jsonp",
-                jsonp: "callback",
-                success: function(data) {
-                    $('#' + id + '-followers').html(format(data.data.counts.followed_by));
-                }
+            if ($('.' + id + '-followers').length > 1) {
+                $('.' + id + '-followers').text($('.' + id + '-followers').first().text());
+            }
+            else {
+                nRequests++;
+                // console.log(nRequests);
+                var $url = 'https://api.instagram.com/v1/users/' + id + '/?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
+                $.ajax({
+                    method: "GET",
+                    url: $url,
+                    dataType: "jsonp",
+                    jsonp: "callback",
+                    success: function(data) {
+                        $('.' + id + '-followers').html(format(data.data.counts.followed_by));
+                    }
 
-            });
+                });
+            }
         }
 
          function getFollowersProfile(id) {
             nRequests++;
-            console.log(nRequests);
+            // console.log(nRequests);
             var $url = 'https://api.instagram.com/v1/users/' + id + '/?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
             $.ajax({
                 method: "GET",
@@ -454,7 +486,7 @@
 
         function getUserId(username) {
             nRequests++;
-            console.log(nRequests);
+            // console.log(nRequests);
             var $url = 'https://api.instagram.com/v1/users/search?q=' + username + '&access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
             $.ajax({
                 method: "GET",
@@ -474,7 +506,7 @@
 
         function getUserFollows(id) {
             nRequests++;
-            console.log(nRequests);
+            // console.log(nRequests);
             var $url = 'https://api.instagram.com/v1/users/' + id + '/follows?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
             $.ajax({
                 method: "GET",
@@ -482,7 +514,7 @@
                 dataType: "jsonp",
                 jsonp: "callback",
                 success: function(data) {
-                    console.log(data);
+                    // console.log(data);
                     // console.log({'username' : data.data[0].username, 'id' : data.data[0].id});
                 }
 
@@ -495,7 +527,7 @@
             if (currentResponse.data[currentResponse.currentItem].currentTaggedUser == undefined) {
                 currentResponse.data[currentResponse.currentItem].currentTaggedUser = 0;
             } 
-            if (currentResponse.data[currentResponse.currentItem].currentTaggedUser == currentResponse.data[currentResponse.currentItem].users_in_photo.length ) {
+            if ( (currentResponse.data[currentResponse.currentItem].currentTaggedUser == currentResponse.data[currentResponse.currentItem].users_in_photo.length) || (currentResponse.data[currentResponse.currentItem].users_in_photo[currentResponse.data[currentResponse.currentItem].currentTaggedUser].user.id == currentResponse.data[0].user.id )) {
                 getCommentUser(0);
                 return;
             }
@@ -510,6 +542,7 @@
                 currentResponse.data[currentResponse.currentItem].currentTaggedUser++;
                 getTaggedUser(0);
             } else {
+                $('.userPhotos .numLikes').last().addClass('link');
                 $('.userPhotos .numLikes').last().html('<strong>' + response.data[0].user.username + '</strong> taggades i fotot');
                 getPhotos(response.data[0].user.id);
             }
@@ -529,7 +562,7 @@
             }
             if (currentResponse.data[currentResponse.currentItem].comments.data == undefined) {
                 nRequests++;
-                console.log(nRequests);
+                // console.log(nRequests);
                 var $url = 'https://api.instagram.com/v1/media/' + currentResponse.data[currentResponse.currentItem].id + '/comments?access_token=2877872.ba4c844.1f742ef3016e440aa47dab886b5a5300';
                 $.ajax({
                     method: "GET",
@@ -537,7 +570,7 @@
                     dataType: "jsonp",
                     jsonp: "callback",
                     success: function(response) {
-                        console.log(response.data);
+                        // console.log(response.data);
                         currentResponse.data[currentResponse.currentItem].comments.data = response.data;
                         getCommentUser(0);
                         // console.log({'username' : data.data[0].username, 'id' : data.data[0].id});
@@ -550,11 +583,12 @@
                 return;
             }
 
-            if (currentResponse.data[currentResponse.currentItem].currentCommentUser == currentResponse.data[currentResponse.currentItem].comments.data.length ) {
+            if ((currentResponse.data[currentResponse.currentItem].currentCommentUser == currentResponse.data[currentResponse.currentItem].comments.data.length ) || (currentResponse.data[currentResponse.currentItem].comments.data[currentResponse.data[currentResponse.currentItem].currentCommentUser].from.id == currentResponse.data[0].user.id) ) {
                 return getPhotos(currentResponse.data[0].user.id);
                 
             }
             // currentResponse.currentItem++;
+
             getPhotos(currentResponse.data[currentResponse.currentItem].comments.data[currentResponse.data[currentResponse.currentItem].currentCommentUser].from.id, 'comment');
          
             
@@ -565,6 +599,7 @@
                 currentResponse.data[currentResponse.currentItem].currentCommentUser++;
                 getCommentUser(0);
             } else {
+                $('.userPhotos .numLikes').last().addClass('link');
                 $('.userPhotos .numLikes').last().html('<strong>' + response.data[0].user.username + '</strong> : ' + currentResponse.data[currentResponse.currentItem].comments.data[currentResponse.data[currentResponse.currentItem].currentCommentUser].text);
                 getPhotos(response.data[0].user.id);
             }
@@ -572,43 +607,80 @@
 
 
 
-        var drawUserPhotos = function(response) {
+        var drawUserPhotos = function(response, back = false) {
+            newUser = $('<a class="linkuser"/>');
+            newUser.text( (back ? '< ' : '> ') + response.data[0].user.username);
+            newUser.attr('data-user', response.data[0].user.username);
+            if ($('.linkuser').last().attr('data-user') != response.data[0].user.username) $('#linktree').append(newUser);
             // response.data.sort(mostLiked);
             // treeUsers.push(response.data[0].user);
                 // $('#linktree').append('<span><a href="#" onclick="scrollTo(' + response.data[0].user.id + ')">@' + response.data[0].user.username + '</a><br/></span>');
-            if ((userStack[userStack.length-1] != response.data[0].user.id) ) {
+            if ($('.userPhoto').last().children().first().hasClass('userPhoto-info')){
+                $('.userPhoto').last().remove();
+            }
+            if (($('.userPhoto-info').last().attr('id') != response.data[0].user.id) ) {
                 userStack.push(response.data[0].user.id);
                 // drawLinkPhoto(response);
-                    var html = '<div class="user" ><div class="userInfo" id="' + response.data[0].user.id + '"><p class="userFollowers"><strong>' + response.data[0].user.username + '<strong><br/><span id="' + response.data[0].user.id + '-followers">1000</span> följare</p><img src="pil.svg"/></div><div class="userPhotos"></div</div>';
+                    var html = '<div class="user" ><div class="userInfo" id="' + response.data[0].user.id + '"><p class="userFollowers"><strong>' + response.data[0].user.username + '</strong><br/><span class="' + response.data[0].user.id + '-followers">1000</span> följare</p><img src="pil.svg"/></div><div class="userPhotos"></div</div>';
+                    // userInfo = $('<div class="userPhotos"/>');
+                    userPhoto = $('<div class="userPhoto"/>');
+                    userInfoContent = $('<div class="userPhoto-info"/>');
+                    userInfoContent.attr('id',response.data[0].user.id);
+                    if (back) {
+                        userInfoContent.addClass('back');
+                    }
+                    userInfoContent.html('<p class="userFollowers"><strong>' + response.data[0].user.username + '</strong><br/><span class="' + response.data[0].user.id + '-followers">1000</span> följare</p><img src="pil.svg"/>');
+                    // userInfo.append(userInfoContent);
+                    userPhoto.append(userInfoContent);
                 // var html = '<div class="user"><div class="userInfo" id="' + response.data[0].user.id + '"></div><div class="userPhotos"></div></div>';
-                document.getElementById('instafeed').innerHTML += html;
+                $('.userPhotos').first().append(userPhoto);
+                getFollowers(response.data[0].user.id);
             }
         
             
-            var iter = Math.min(response.data.length, response.currentItem + 4);
+            var iter = Math.min(response.data.length-1, response.currentItem + 4);
             
-            for (response.currentItem ; response.currentItem < iter ; response.currentItem++) {
-
+            for (response.currentItem ; response.currentItem <= iter ; response.currentItem++) {
+                // if (response.data[response.currentItem] == undefined) {
+                //     return;
+                // }
+                if ($('#' + response.data[response.currentItem].id).length == 1) {
+                    if (response.currentItem + 1 > iter) {
+                        if (userStack.length > 1) userStack.pop();
+                        if (userStack.length > 1) userStack.pop();
+                        // if (userStack.length > 1) userStack.pop();
+                        
+                        userMedia[userStack[userStack.length-1]].currentItem++;
+                        return drawUserPhotos(userMedia[userStack[userStack.length-1]], true)
+                    } else {
+                        response.currentItem++;
+                    }
+                }
                 var div = $('<div class="userPhoto"><div class="userPhoto-' + response.currentItem + '"  id="' + response.data[response.currentItem].id + '"><p class="numLikes">' + format(response.data[response.currentItem].likes.count) + ' gillar</p></div></div>');
                 var img = $('<img class="img-' + response.currentItem + '"/>');
                 img.attr('src',response.data[response.currentItem].images.standard_resolution.url);
                
-                $('#' + response.data[0].user.id + '+ .userPhotos').append(div);
+                // $('#' + response.data[0].user.id + '+ .userPhotos').append(div);
+                $('.userPhotos').first().append(div);
                 $('#' + response.data[response.currentItem].id).prepend(img);
-                if (response.currentItem + 1 == iter ){
+                if (response.currentItem == iter ){
                     // getFollowers(response.data[0].user.id);
-                    response.currentItem++;
-                    if (!(response.data[response.currentItem].users_in_photo.length == 0)) {
+                    // response.currentItem++;
+                    // console.log(response.data);
+
+                    if ( Math.random() < 0.333){
+                        if (userStack.length > 1) userStack.pop();
+                        if (userStack.length > 1) userStack.pop();
+                        if (userStack.length > 1) userStack.pop();
+                        return drawUserPhotos(userMedia[userStack[userStack.length-1]], true);
+                    } else if (!(response.data[response.currentItem].users_in_photo.length == undefined)) {
                         return {'action' : 'getTagged', 'id' : response.data[response.currentItem].id};
                     } else if (!(response.data[response.currentItem].comments.count == 0)) {
                         return {'action' : 'getComment', 'id' : response.data[response.currentItem].id};
-                    } else if (response.currentItem == 15) {
-                        if (userStack.length > 1) userStack.pop();
-                        if (userStack.length > 1) userStack.pop();
-                        if (userStack.length > 1) userStack.pop();
-                        return drawUserPhotos(userMedia[userStack[userStack.length-1]]);
-                    } else {
+                    // } else if (response.currentItem == 20 / userStack.length  || Math.random() < 0.667) {
                         
+                    } else {
+                        response.currentItem++;
                         return drawUserPhotos(response);
                     }
                 }
@@ -802,7 +874,7 @@
         function getUserPhotos(id) {
             window.stop();
             $('#update').html('Laddar...');
-            $('main').html('');
+            $('.userPhotos').html('');
             $('#linktree').html('');
             pageUser = id;
             numberOfUsers = 1;
@@ -824,7 +896,7 @@
                 }, 1000);
             } else if (id == undefined) {
                 $('html, body').animate({
-                    scrollTop: $('.userInfo').first().offset().top
+                    scrollTop: $('#instafeed').first().offset().top
                 }, 1000);
             } else {
                 $('html, body').animate({
@@ -858,7 +930,7 @@
         getPhotos(currentUser);
         for (x in users) {
             var a = $('<a />');
-            a.attr('onclick', 'getUserPhotos(' + users[x].id + ');');
+            a.attr('data-id', users[x].id);
             // a.attr('href', '');
             a.text('@' + users[x].username);
             var div = $('<div class="profile-pic-div"/>');
@@ -886,7 +958,15 @@
         $('main').on('click', 'img', function() {
                     openSlide($(this));
                 });
+        $('h1 a').first().on('click', function(e){
+            e.preventDefault();
+            scrollTo('top');
+        });
 
+        $('#users a').on('click',function(e){
+            e.preventDefault();
+            getUserPhotos($(this).attr('data-id'));
+        });
 
         $(function(){
             $('#full').click(function(){
