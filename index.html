@@ -42,6 +42,10 @@
         cursor: pointer;
     }
 
+    #users a.current {
+        text-decoration: underline;
+    }
+
     #users a:hover {
         text-decoration: underline;
     }
@@ -74,18 +78,23 @@
         /*right: 10%;*/
     }
 
-    #users a:hover .profile-pic-div {
+    #users a:hover .profile-pic-div, #users a.current .profile-pic-div {
         display: block;
         opacity: 1;
         visibility: visible;
     }
+    
+    #users a.current .profile-pic-div {
+        z-index: -10;
+    }
+
     
     nav {
         padding: 3%;
         padding-top: 1.8%;
         width: 50%;
         height: 100%;
-        min-height: 100vh;
+        min-height: 80vh;
         box-sizing: border-box;
         float: left;
     }
@@ -117,6 +126,11 @@
         font-size: 2vw;
         line-height: 1.0;
         margin: 0;
+        font-weight: normal;
+    }
+
+    footer {
+        display:none;
     }
     
     h1 {
@@ -172,15 +186,30 @@
     }
 
     .userPhoto-info img {
-        width: 20%;
+        width: 90%;
         transform-origin: left;
-        transform: scale(0.8) translate(50%, -50%) rotate(90deg);
+        transform: scale(0.9) translate(50%, -50%) rotate(90deg);
     }
 
 
 
     .userPhoto-info.back img {
-        transform: scale(0.8) translate(50%, 0%) rotate(-90deg);
+        transform: scale(0.9) translate(50%, 50%) rotate(-90deg);
+    }
+
+    .linkuser:before {
+        background: url(pil.svg) no-repeat;
+        background-size: 13px 10px;
+        display: inline-block;
+        width: 12px;
+        height: 10px;
+        content: "";
+        transform-origin: left;
+        transform: translate(50%, -50%) rotate(90deg);
+    }
+
+    .linkuser.back:before {
+        transform: translate(50%, 50%) rotate(-90deg);
     }
     
     .userPhotos {
@@ -191,22 +220,35 @@
     .userPhoto img {
         width: 100%;
     }
+
     
-    .userPhoto {
+    .userPhoto, .userPhoto-info-parent {
         width: 30%;
-        padding-bottom: 25%;
+        padding-bottom: 0;
         float: left;
         box-sizing: border-box;
     }
-    
-    .userPhoto:nth-child(even) {
-        float: left;
+
+    .userPhoto-info-parent {
+        width: 50%;
+        margin-bottom: 20%;
     }
     
-    .user:nth-child(even) .userPhoto,
-    .user:nth-child(even) .linkPhoto .container {
-        float: left;
+    .userPhoto:nth-child(4n+2) {
+        width: 60%;
+
     }
+
+    .userPhoto-info-parent + .userPhoto {
+        width: 30%;
+    }
+   /* .userPhoto-info-parent {
+        width: 30% !important;
+    }*/
+
+
+    
+
     
     .userPhoto:nth-child(6n+1) div {
         width: 100%;
@@ -219,26 +261,30 @@
     
     .userPhoto:nth-child(6n+3) div {
         width: 30%;
-        margin-left: 30%;
-        margin-top: -20%;
+        margin-left: 0%;
+        margin-top: 0%;
     }
     
     .userPhoto:nth-child(6n+4) div {
         width: 55%;
-        margin-left: -10%;
-        margin-top: -20%;
+        margin-left: 0%;
+        margin-top: 0%;
     }
     
     .userPhoto:nth-child(6n+5) div {
         width: 40%;
-        margin-left: -30%;
-        margin-top: -40%;
+        margin-left: 0%;
+        margin-top: 0%;
     }
     
     .userPhoto:nth-child(6n+6) div {
         width: 55%;
-        margin-left: -20%;
-        margin-top: -20%;
+        margin-left: 0%;
+        margin-top: 0%;
+    }
+
+    .userPhoto div {
+        margin-bottom: 20%;
     }
 
     .userFollowers {
@@ -246,8 +292,10 @@
         line-height: 1.3;
     }
 
-    .userPhoto-Info {
-        width: 100%;
+    .userPhoto-info {
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
 
@@ -289,7 +337,12 @@
         bottom: -8.5em;
         padding-bottom: 3%;
         line-height: 2.5;
-        font-size: 2em;
+        font-size: 1vw;
+        width: 15%;
+    }
+
+    #linktree a {
+        display:block;
     }
     
     #linktree span {
@@ -361,7 +414,7 @@
     <div class="user"><div class="userPhotos"></div>
     </main>
     <footer>
-        <h3><a id="update" href="#" onclick="update()">Laddar...</a></h3></footer>
+        <h3><a id="update" href="#">Laddar...</a></h3></footer>
     <div id="full">
         <table id="overlay">
           <tr>
@@ -423,6 +476,7 @@
         var numberOfUsers = 1;
         var userSet = {};
         userStack = [];
+        usedUsers = new Set();
         var currentUser = 178592166;
         var pageUser = currentUser;
         var currentResponse = {};
@@ -544,7 +598,7 @@
                 getTaggedUser(0);
             } else {
                 $('.userPhotos .numLikes').last().addClass('link');
-                $('.userPhotos .numLikes').last().html('<strong>' + response.data[0].user.username + '</strong> taggades i fotot');
+                $('.userPhotos .numLikes').last().html('<strong>@' + response.data[0].user.username + '</strong> taggades i fotot');
                 getPhotos(response.data[0].user.id);
             }
 
@@ -601,7 +655,7 @@
                 getCommentUser(0);
             } else {
                 $('.userPhotos .numLikes').last().addClass('link');
-                $('.userPhotos .numLikes').last().html('<strong>' + response.data[0].user.username + '</strong> : ' + currentResponse.data[currentResponse.currentItem].comments.data[currentResponse.data[currentResponse.currentItem].currentCommentUser].text);
+                $('.userPhotos .numLikes').last().html('<strong>@' + response.data[0].user.username + '</strong> : ' + currentResponse.data[currentResponse.currentItem].comments.data[currentResponse.data[currentResponse.currentItem].currentCommentUser].text);
                 getPhotos(response.data[0].user.id);
             }
         }
@@ -610,7 +664,8 @@
 
         var drawUserPhotos = function(response, back = false) {
             newUser = $('<a class="linkuser"/>');
-            newUser.text( (back ? '< ' : '> ') + response.data[0].user.username);
+            newUser.text( '@' + response.data[0].user.username);
+            if (back) newUser.addClass('back');
             newUser.attr('data-user', response.data[0].user.username);
             if ($('.linkuser').last().attr('data-user') != response.data[0].user.username) $('#linktree').append(newUser);
             // response.data.sort(mostLiked);
@@ -621,16 +676,17 @@
             }
             if (($('.userPhoto-info').last().attr('id') != response.data[0].user.id) ) {
                 userStack.push(response.data[0].user.id);
+                if (userStack.length != 0) usedUsers.add(response.data[0].user.id);
                 // drawLinkPhoto(response);
                     var html = '<div class="user" ><div class="userInfo" id="' + response.data[0].user.id + '"><p class="userFollowers"><strong>' + response.data[0].user.username + '</strong><br/><span class="' + response.data[0].user.id + '-followers">1000</span> följare</p><img src="pil.svg"/></div><div class="userPhotos"></div</div>';
                     // userInfo = $('<div class="userPhotos"/>');
-                    userPhoto = $('<div class="userPhoto"/>');
+                    userPhoto = $('<div class="userPhoto-info-parent"/>');
                     userInfoContent = $('<div class="userPhoto-info"/>');
                     userInfoContent.attr('id',response.data[0].user.id);
                     if (back) {
                         userInfoContent.addClass('back');
                     }
-                    userInfoContent.html('<p class="userFollowers"><strong>' + response.data[0].user.username + '</strong><br/><span class="' + response.data[0].user.id + '-followers">1000</span> följare</p><img src="pil.svg"/>');
+                    userInfoContent.html('<p class="userFollowers"><strong>@' + response.data[0].user.username + '</strong><br/><span class="' + response.data[0].user.id + '-followers">1000</span> följare</p><img src="pil.svg"/>');
                     // userInfo.append(userInfoContent);
                     userPhoto.append(userInfoContent);
                 // var html = '<div class="user"><div class="userInfo" id="' + response.data[0].user.id + '"></div><div class="userPhotos"></div></div>';
@@ -652,7 +708,7 @@
                         // if (userStack.length > 1) userStack.pop();
                         
                         userMedia[userStack[userStack.length-1]].currentItem++;
-                        return drawUserPhotos(userMedia[userStack[userStack.length-1]], true)
+                        return {'action' : 'goBack', 'response' : userMedia[userStack[userStack.length-1]]};
                     } else {
                         response.currentItem++;
                     }
@@ -673,7 +729,7 @@
                         if (userStack.length > 1) userStack.pop();
                         if (userStack.length > 1) userStack.pop();
                         if (userStack.length > 1) userStack.pop();
-                        return drawUserPhotos(userMedia[userStack[userStack.length-1]], true);
+                        return {'action' : 'goBack', 'response' : userMedia[userStack[userStack.length-1]]};
                     } else if (!(response.data[response.currentItem].users_in_photo.length == undefined)) {
                         return {'action' : 'getTagged', 'id' : response.data[response.currentItem].id};
                     } else if (!(response.data[response.currentItem].comments.count == 0)) {
@@ -684,20 +740,14 @@
                         response.currentItem++;
                         return drawUserPhotos(response);
                     }
+
                 }
             }
             
         }
 
         var drawLinkPhoto = function(response) {
-            //  if ( $('#' + linkPhoto.id) != undefined ) {
-            //     if (currentResponse.data.length > 6) {
-            //         $('#' + linkPhoto.id + ' img').attr('src', currentResponse.data[6].images.standard_resolution.url);
-            //         $('#' + linkPhoto.id + ' .numLikes').html(response.data[6].likes.count + ' gillar');
-            //     } else {
-            //         $('#' + linkPhoto.id).html();
-            //     }
-            // }
+
             var html = '<div class="linkPhoto" id="' + response.data[0].user.id + '"><div class="container"><p class="userName">' + response.data[0].user.username + '<br/>1000 följare</p><img src="pil.svg" class="img-link"></div></div>';
 
             $('.user').last().append(html);
@@ -741,30 +791,30 @@
                     // return tagged[0].user.id;
                 }
             }
-            // if no tagged look in caption
-            // for (x in response.data){
-            //     var pattern = /\B@[a-z0-9_-]+/gi;
-            //     var tagged = response.data[x];
-            //     var users = tagged.match(pattern);
-            //     if (users.length != 0) {
 
-            //     }
-            // }
             return false;
         }
 
 
-        function drawNextPhotos(response) {
+        function drawNextPhotos(response, back = false) {
             // console.log(response);
-            if (response == false) {
+
+            if ((response == false) || (nRequests > 300) || ($('#linktree a').length > 16)) {
                 console.log('Private Profile probably')
                 //Go back to previous and continue or something similar
                 return;
             }
 
-            next = drawUserPhotos(response);
-            
+            next = drawUserPhotos(response, back);
+            if (next == undefined){
+                return;
+            }
             console.log(numberOfUsers);
+
+            if (next.action == 'goBack'){
+                return drawNextPhotos(next.response,true);
+
+            }
 
             // $('.userPhotos .numLikes').last().html(respone.data[i].users_in_photo[0].username + ' taggades i fotot');
             currentUser = response.data[0].user.id;
@@ -783,25 +833,6 @@
                     drawNextPhotos(currentResponse);
                 }
 
-                // else {
-                //     getTag(next.id);
-                // }
-
-                // var linkPhoto = getLinkPhoto(response);
-
-                // if (linkPhoto) {
-                //     currentUser = user_id;
-                //     currentResponse = response;
-                //     drawLinkPhoto(linkPhoto);
-                //     var nextUser = linkPhoto.users_in_photo[currentTaggedUser].user.id;
-                //     setTimeout(getPhotos(nextUser), 200);
-                // } else {
-                //     // console.log('----\n' + currentResponse.data[0].user.username);
-                //     // console.log(response.data[0].user.username + '\n ---');
-
-                //     // unDrawLastLinkPhoto();
-                //     // stepBack();
-                // }
             }
         }
 
@@ -848,7 +879,11 @@
                         console.log('ERROR: ' + errorCode);
                         console.log(numberOfUsers);
                         if (errorCode.code == 429) {
-                            window.stop();
+                           try {
+                                window.stop();
+                            } catch (exception) {
+                                document.execCommand('Stop');
+                            }
                         }
                         // unDrawLastLinkPhoto();
                         // stepBack();
@@ -873,17 +908,27 @@
         }
 
         function getUserPhotos(id) {
-            window.stop();
+            try {
+                window.stop();
+            } catch (exception) {
+                document.execCommand('Stop');
+            }
             $('#update').html('Laddar...');
-            $('.userPhotos').html('');
-            $('#linktree').html('');
-            pageUser = id;
-            numberOfUsers = 1;
-            userSet = {};
-            userStack = [];
-            getPhotos(id);
-            setTimeout(scrollTo,1500);
-            setTimeout(ready,2000);
+            setTimeout(function(){
+               
+                pageUser = id;
+                $('#users a').removeClass('current');
+                $('#users a[data-id=' + id +']').addClass('current');
+                numberOfUsers = 1;
+                userSet = {};
+                userStack = [];
+                usedUsers = new Set();
+                $('.userPhotos').html('');
+                $('#linktree').html('');
+                getPhotos(id);
+                setTimeout(scrollTo,1500);
+                setTimeout(ready,2000);
+            }, 700);
         }
 
         function ready(){
@@ -912,7 +957,7 @@
             setTimeout(updateGetNew, 1000);
         }
         function updateGetNew(){
-            getUserPhotos(pageUser);
+            getUserPhotos($('.userPhoto-info').first().attr('id'));
         }
 
         function openSlide(photo) {
@@ -928,7 +973,7 @@
         }
 
 
-        getPhotos(currentUser);
+        // getPhotos(currentUser);
         for (x in users) {
             var a = $('<a />');
             a.attr('data-id', users[x].id);
@@ -966,7 +1011,13 @@
 
         $('#users a').on('click',function(e){
             e.preventDefault();
+            $('footer').show();
             getUserPhotos($(this).attr('data-id'));
+        });
+
+        $('#update').on('click', function(e){
+            e.preventDefault();
+            update();
         });
 
         $(function(){
@@ -1027,42 +1078,6 @@
             }
 
 
-        // $(window).on('load', function(e) {
-        //     // $('img').click(function() {
-        //     //     openSlide($(this));
-        //     // });
-
-            
-        //     for (x in treeUsers) {
-        //         treeUsers[x].offset = $('#' + treeUsers[x].id).offset().top
-        //     }
-        //      var fixmeTop = $('body').offset().bottom;       // get initial position of the element
-            
-
-        //     $(window).scroll(function() {                  // assign scroll event listener
-
-        //         var currentScroll = $(window).scroll() + $(window).height(); // get current position
-        //          for (x in treeUsers) {
-        //             if (currentScroll == treeUsers[x]) {           // apply position: fixed if you
-        //                 // $('#178592166').css({                      // scroll to that element or below it
-        //                 //     position: 'fixed',
-        //                 //     top: '0',
-        //                 //     right: '0'
-        //                 // });
-        //                 console.log('tjaaa');
-        //                 $('#linktree').append('<span><a href="#" onclick="scrollTo(' + treeUsers[x].id + ')">@' + treeUsers[x].username + '</a><br/></span>');
-        //             } else {                                   // apply position: static
-        //                 // $('#178592166').css({                      // if you scroll above it
-        //                 //     position: 'static'
-        //                 // });
-        //                 $('#linktree span').last().remove();
-        //             }
-        //         }
-
-        //     });
-
-
-        // });
         </script>
 </body>
 
