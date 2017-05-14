@@ -213,6 +213,16 @@
     .linkuser.back:before {
         transform: translate(50%, 50%) rotate(-90deg);
     }
+
+    .info {
+        font-size: 2vw;
+        line-height: 1;
+        width: 55vw;
+        position: fixed;
+        left: 21%;
+        top:4%;
+        display:none;
+    }
     
     .userPhotos {
         width: 80%;
@@ -238,6 +248,7 @@
         flex-grow: 1;
         flex-shrink: 0;
         padding: 0% 15% 0% 0%;
+        width: 1%;
     }
 
     .userPhoto-info-parent {
@@ -455,6 +466,10 @@
         height: auto;
 
     }
+
+    #closeInfo {
+        display:none;
+    }
     </style>
 </head>
 
@@ -465,7 +480,7 @@
     <header>
         <h1><a href="#" >Samtida<br/>Svensk<br/>Fotografi</a></h1></header>
     <nav id="users"></nav>
-    <nav class="nav-about"><a href="#">?</a></nav>
+    <nav class="nav-about"><a href="#" id="info">?</a><a href="#" id="closeInfo">X</a></nav>
     <aside id="linktree"></aside>
     <main id="instafeed">
     <div class="user"><div class="userPhotos"></div>
@@ -479,6 +494,7 @@
           </tr>
         </table>
         </div>
+        <div class="info">I Samtida Svensk Fotografi försöker vi fånga tidens anda och motveka problemet med de flesta utställningars statiska innehåll. Här försöker vi koppla upp oss emot den nya verkligheten.</div>
         <script type="text/javascript">
         
         // var users = [{
@@ -1082,6 +1098,17 @@
             e.preventDefault();
             scrollTo('top');
         });
+        $('#info').on('click', toggleInfo);
+        $('#closeInfo').on('click', toggleInfo);
+
+        function toggleInfo(e) {
+            e.preventDefault();
+            $('.nav-about a').fadeToggle(200);
+            $('.info').fadeToggle(200);
+            $('#users').fadeToggle(200);
+            $('#instafeed').fadeToggle(200);
+        }
+
 
         $('#users a').on('click',function(e){
             e.preventDefault();
