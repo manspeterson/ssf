@@ -148,12 +148,8 @@
     }
 
     h1 a:before {
-        content: url('pil.svg');
-        display: inline-block;
-        transform-origin: 0 0;
-        transform: scale(1.2);
+        font-size: 5.8vw;
         visibility: hidden;
-        width: 100%;
         position: absolute;
     }
     
@@ -219,9 +215,14 @@
         line-height: 1;
         width: 55vw;
         position: fixed;
-        left: 21%;
-        top:4%;
-        display:none;
+        left: 18%;
+        top: 0;
+        padding-left: 2%;
+        padding-right: 16vw;
+        padding-top: 3%;
+        display: none;
+        height: 100vh;
+        background: white;
     }
     
     .userPhotos {
@@ -469,8 +470,64 @@
 
     #closeInfo {
         display:none;
+        position: absolute;
+        font-family: 'pil';
+        left: 20%;
+        top: 0;
     }
-    </style>
+    @font-face {
+        font-family: 'pil';
+        src: url('fonts/pil.eot');
+        src: url('fonts/pil.eot?#iefix') format('embedded-opentype'),
+             url('fonts/pil.woff') format('woff'),
+             url('fonts/pil.ttf') format('truetype'),
+             url('/fonts/pil.svg#pil') format('svg');
+        font-weight: normal;
+        font-style: normal;
+        }
+    .icon-pil-upp:before, .icon-pil-bak:before {
+        display: inline-block;
+       font-family: 'pil';
+       font-style: normal;
+       font-weight: normal;
+       line-height: 1;
+       -webkit-font-smoothing: antialiased;
+       -moz-osx-font-smoothing: grayscale
+    }
+
+    .icon-pil-bak:before {
+        font-size: 5.8vw;
+        position: absolute;
+        content:'\0043';
+        line-height: 2.1;
+    }
+
+     .icon-pil-upp:before{content:'\0042';}
+    
+    .userFollowers:after{
+        content:'\0041';
+    }
+    .back .userFollowers:after{
+        content:'\0043';
+    }
+
+    .userFollowers:after{
+        display:block;
+        font-size: 14.5vw;
+        line-height: 1.3;
+        font-family: 'pil';
+       font-style: normal;
+       font-weight: normal;
+       -webkit-font-smoothing: antialiased;
+       -moz-osx-font-smoothing: grayscale
+    }
+
+    strong {
+        font-weight: 600;
+    }
+   
+
+        </style>
 </head>
 
 <body>
@@ -478,9 +535,9 @@
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
     <header>
-        <h1><a href="#" >Samtida<br/>Svensk<br/>Fotografi</a></h1></header>
+        <h1><a href="#" class="icon-pil-upp">Samtida<br/>Svensk<br/>Fotografi</a></h1></header>
     <nav id="users"></nav>
-    <nav class="nav-about"><a href="#" id="info">?</a><a href="#" id="closeInfo">X</a></nav>
+    <nav class="nav-about"><a href="#" id="info">?</a><a href="#" id="closeInfo" class="icon-pil-bak"></a></nav>
     <aside id="linktree"></aside>
     <main id="instafeed">
     <div class="user"><div class="userPhotos"></div>
@@ -494,7 +551,7 @@
           </tr>
         </table>
         </div>
-        <div class="info">I Samtida Svensk Fotografi försöker vi fånga tidens anda och motveka problemet med de flesta utställningars statiska innehåll. Här försöker vi koppla upp oss emot den nya verkligheten.</div>
+        <div class="info">I Samtida Svensk Fotografi har vi för första gången skapat en levande fotoutställning som vid varje besök erbjuder en alldeles unik upplevelse. Den uppsättning foton du nu ser har aldrig tidigare beskådats av några andra ögon.<br><br>Utställningen utgår från sex stycken utvalda svenska instagramfotografer och simulerar hur genomsnitts-svensson navigerar sig runt på Instagram.</div>
         <script type="text/javascript">
         
         // var users = [{
@@ -763,7 +820,7 @@
                     if (back) {
                         userInfoContent.addClass('back');
                     }
-                    userInfoContent.html('<p class="userFollowers"><strong>@' + response.data[0].user.username + '</strong><br/><span class="' + response.data[0].user.id + '-followers">1000</span> följare</p><img src="pil.svg"/>');
+                    userInfoContent.html('<p class="userFollowers"><strong>@' + response.data[0].user.username + '</strong><br/><span class="' + response.data[0].user.id + '-followers">1000</span> följare</p>');
                     // userInfo.append(userInfoContent);
                     userPhoto.append(userInfoContent);
                 // var html = '<div class="user"><div class="userInfo" id="' + response.data[0].user.id + '"></div><div class="userPhotos"></div></div>';
@@ -1105,8 +1162,9 @@
             e.preventDefault();
             $('.nav-about a').fadeToggle(200);
             $('.info').fadeToggle(200);
-            $('#users').fadeToggle(200);
-            $('#instafeed').fadeToggle(200);
+            $('.current .profile-pic-div').toggle();
+            // $('#users').fadeToggle(200);
+            // $('#instafeed').fadeToggle(200);
         }
 
 
